@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-commerce Store</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Inter Font -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap">
+    <!-- Load jQuery for Contact Form Validation -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawR/h/jY9ATIfg8xS4s/a0d0/jStW3IfsYw=" crossorigin="anonymous"></script>
+
+    <style>
+        /* Custom styles and Tailwind config */
+        :root {
+            --primary: #10B981; /* Emerald 500 */
+            --secondary: #F59E0B; /* Amber 500 */
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f7f7;
+        }
+        .text-primary { color: var(--primary); }
+        .bg-primary { background-color: var(--primary); }
+        .hover-primary:hover { background-color: #059669; } /* Emerald 600 */
+        
+        /* Smooth scrolling for scroll-to-top button */
+        html { scroll-behavior: smooth; }
+        
+        /* Star Rating Style */
+        .star-rating {
+            color: var(--secondary);
+            font-size: 1.25rem;
+        }
+    </style>
+</head>
+<body id="top">
+
+    <!-- 
+        ============================================================
+        COMMON COMPONENT: NAVBAR (Step 1)
+        ============================================================
+    -->
+    <nav class="sticky top-0 z-50 bg-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex-shrink-0">
+                    <a href="#" onclick="navigate('home')" class="text-2xl font-bold text-primary">EcoStore</a>
+                </div>
+
+                <!-- Navigation Links -->
+                <div class="hidden md:flex space-x-4">
+                    <a href="#" onclick="navigate('home')" class="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition">Home</a>
+                    <a href="#" onclick="navigate('products')" class="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition">Shop</a>
+                    <a href="#" onclick="navigate('categories')" class="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition">Categories</a>
+                    <a href="#" onclick="navigate('about')" class="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition">About Us</a>
+                    <a href="#" onclick="navigate('contact')" class="text-gray-700 hover:text-primary px-3 py-2 rounded-md text-sm font-medium transition">Contact Us</a>
+                </div>
+
+                <!-- Search, Cart, User Icons -->
+                <div class="flex items-center space-x-4">
+                    <!-- Search Icon/Input -->
+                    <div class="relative group">
+                        <svg onclick="toggleSearch()" class="w-6 h-6 text-gray-500 cursor-pointer hover:text-primary transition" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        <div id="search-dropdown" class="absolute right-0 mt-3 w-64 p-3 bg-white rounded-lg shadow-xl hidden">
+                            <input type="text" id="search-input" placeholder="Search products..." class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary">
+                            <button onclick="performSearch()" class="mt-2 w-full bg-primary text-white py-1.5 rounded-lg hover-primary transition">Search</button>
+                        </div>
+                    </div>
+
+                    <!-- Cart Icon -->
+                    <button onclick="navigate('cart')" class="relative p-1 rounded-full text-gray-500 hover:text-primary transition">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                        <span id="cart-count" class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">0</span>
+                    </button>
+                    
+                    <!-- User Icon -->
+                    <button class="p-1 rounded-full text-gray-500 hover:text-primary transition">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <main id="app-content" class="min-h-screen pt-8 pb-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"></main>
+
+    <!-- 
+        ============================================================
+        COMMON COMPONENT: FOOTER (Step 1)
+        ============================================================
+    -->
+    <footer class="bg-gray-800 text-white mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <!-- Company Info -->
+                <div>
+                    <h3 class="text-xl font-bold text-primary mb-4">EcoStore</h3>
+                    <p class="text-sm text-gray-400">Your destination for sustainable and high-quality products.</p>
+                    <p class="mt-4 text-sm text-gray-400">Email: support@ecostore.com</p>
+                </div>
+                <!-- Quick Links -->
+                <div>
+                    <h4 class="font-semibold mb-4 border-b border-gray-700 pb-1">Quick Links</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#" onclick="navigate('about')" class="hover:text-primary transition">About Us</a></li>
+                        <li><a href="#" onclick="navigate('contact')" class="hover:text-primary transition">Contact Us</a></li>
+                        <li><a href="#" class="hover:text-primary transition">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:text-primary transition">Terms of Service</a></li>
+                    </ul>
+                </div>
+                <!-- Account Links -->
+                <div>
+                    <h4 class="font-semibold mb-4 border-b border-gray-700 pb-1">Account</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-primary transition">My Account</a></li>
+                        <li><a href="#" onclick="navigate('cart')" class="hover:text-primary transition">View Cart</a></li>
+                        <li><a href="#" class="hover:text-primary transition">Track Order</a></li>
+                    </ul>
+                </div>
+                <!-- Social Media -->
+                <div>
+                    <h4 class="font-semibold mb-4 border-b border-gray-700 pb-1">Follow Us</h4>
+                    <div class="flex space-x-3">
+                        <a href="#" class="text-gray-400 hover:text-primary transition"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M14 12h-2v-2h2v2zm0-4h-2V6h2v2zm0-4h-2V2h2v2zm-4 8H8v-2h2v2zm0-4H8V6h2v2zm0-4H8V2h2v2zM4 22h16v-2H4v2zM12 2c-5.523 0-10 4.477-10 10s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18c-4.418 0-8-3.582-8-8s3.582-8 8-8 8 3.582 8 8-3.582 8-8 8z"/></svg></a>
+                        <a href="#" class="text-gray-400 hover:text-primary transition"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.772 1.662 4.92 4.92.057 1.266.07 1.646.07 4.85s-.012 3.584-.07 4.85c-.148 3.252-1.662 4.772-4.92 4.92-.057.03-.122.052-.19.07-.068.018-.137.03-.207.03h-8c-3.252-.148-4.772-1.662-4.92-4.92-.057-1.266-.07-1.646-.07-4.85s.012-3.584.07-4.85c.148-3.252 1.662-4.772 4.92-4.92 1.266-.057 1.646-.07 4.85-.07zm0 1.837c-3.268 0-3.64.012-4.908.07-.803.036-1.503.178-2.14.479-.636.302-1.182.748-1.636 1.2-1.282 1.284-1.282 3.374 0 4.658.454.454.996.896 1.636 1.235.637.339 1.336.48 2.14.48 1.268.058 1.64.07 4.908.07s3.64-.012 4.908-.07c.803-.036 1.503-.178 2.14-.479.636-.302 1.182-.748 1.636-1.2 1.282-1.284 1.282-3.374 0-4.658-.454-.454-.996-.896-1.636-1.235-.637-.339-1.336-.48-2.14-.48-1.268-.058-1.64-.07-4.908-.07zM12 7c2.76 0 5 2.24 5 5s-2.24 5-5 5-5-2.24-5-5 2.24-5 5-5zm0 2c-1.656 0-3 1.344-3 3s1.344 3 3 3 3-1.344 3-3-1.344-3-3-3zM18.78 3.22c-.198-.198-.458-.298-.778-.302-.32.004-.58.104-.778.302-.198.198-.298.458-.302.778.004.32.104.58.302.778.198.198.458.298.778.302.32-.004.58-.104.778-.302.198-.198.298-.458.302-.778-.004-.32-.104-.58-.302-.778z"/></svg></a>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-8 pt-6 border-t border-gray-700 text-center text-sm text-gray-400">
+                &copy; 2025 EcoStore. All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- 
+        ============================================================
+        COMMON COMPONENT: SCROLL TO TOP BUTTON (Step 1)
+        ============================================================
+    -->
+    <button id="scroll-to-top" onclick="window.scrollTo({ top: 0, behavior: 'smooth' })" 
+        class="fixed bottom-5 right-5 z-40 p-3 bg-primary text-white rounded-full shadow-lg hover-primary transition-opacity duration-300 opacity-0 invisible">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>
+    </button>
+
+<script>
+    // Mock Data for the E-commerce Site
+    const mockProducts = [
+        { id: 1, name: "Luxury Smartwatch", category: "Electronics", price: 299.99, image: "https://placehold.co/400x400/10b981/ffffff?text=Smartwatch", rating: 4.5, description: "Advanced smartwatch with health tracking and long-lasting battery. Features a sleek aluminum body and waterproof design." },
+        { id: 2, name: "Organic Cotton Tee", category: "Apparel", price: 39.50, image: "https://placehold.co/400x400/f59e0b/ffffff?text=T-Shirt", rating: 4.8, description: "Soft, organic cotton t-shirt in forest green. Ethically sourced and comfortable for everyday wear." },
+        { id: 3, name: "Noise Cancelling Headphones", category: "Electronics", price: 199.00, image: "https://placehold.co/400x400/3b82f6/ffffff?text=Headphones", rating: 4.3, description: "Immersive audio experience with industry-leading noise cancellation. Perfect for travel or focus." },
+        { id: 4, name: "Premium Leather Wallet", category: "Accessories", price: 85.00, image: "https://placehold.co/400x400/9ca3af/ffffff?text=Wallet", rating: 4.9, description: "Slim and stylish wallet crafted from genuine leather. Holds up to 8 cards and bills." },
+        { id: 5, name: "Ceramic Coffee Mug Set", category: "Home Goods", price: 45.00, image: "https://placehold.co/400x400/ef4444/ffffff?text=Mug+Set", rating: 4.7, description: "Set of four handmade ceramic mugs for your daily brew. Dishwasher and microwave safe." },
+        { id: 6, name: "Gaming Mouse Pad XL", category: "Electronics", price: 25.99, image: "https://placehold.co/400x400/14b8a6/ffffff?text=MousePad", rating: 4.6, description: "Extra-large gaming surface for precision and speed. Non-slip rubber base." }
+    ];
+
+    const mockCategories = [
+        { name: "Electronics", image: "https://placehold.co/400x200/10B981/ffffff?text=Tech", description: "The latest gadgets and devices to simplify your life and power your passions." },
+        { name: "Apparel", image: "https://placehold.co/400x200/F59E0B/ffffff?text=Clothes", description: "Fashion for all seasons, from casual comfort to formal elegance." },
+        { name: "Home Goods", image: "https://placehold.co/400x200/EF4444/ffffff?text=Home", description: "Decor and essentials for your living space, making your house a home." },
+        { name: "Accessories", image: "https://placehold.co/400x200/3B82F6/ffffff?text=Bags", description: "Complete your look with our premium collection of bags, jewelry, and more." }
+    ];
+
+    const mockTestimonials = [
+        { name: "Jane Doe", text: "The quality of the products exceeded my expectations! Fast shipping and excellent support.", source: "Verified Buyer" },
+        { name: "John Smith", text: "Finally, an ethical store with great designs. My new watch is perfect.", source: "Tech Enthusiast" },
+        { name: "Sarah Lee", text: "I love the coffee mug set. It adds a nice touch to my kitchen. Highly recommend!", source: "Home Decor Blogger" }
+    ];
+
+    // Global State
+    let currentPage = 'home';
+    let cart = []; // { productId: number, quantity: number, price: number }
+    let orderNumber = null;
+
+    // Utility function to format currency
+    const formatCurrency = (amount) => `$${amount.toFixed(2)}`;
+
+    // Utility function to generate star ratings
+    const renderRating = (rating) => {
+        const fullStars = Math.floor(rating);
+        const halfStar = rating % 1 !== 0;
+        let stars = '';
+        for (let i = 0; i < fullStars; i++) stars += '★';
+        if (halfStar) stars += '½';
+        while (stars.length < 5) stars += '☆';
+        return `<span class="star-rating">${stars}</span> (${rating.toFixed(1)})`;
+    };
+
+    // --- CART LOGIC ---
+    const updateCartCount = () => {
+        const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+        document.getElementById('cart-count').textContent = count;
+    };
+
+    const addToCart = (productId, quantity = 1) => {
+        const product = mockProducts.find(p => p.id === productId);
+        if (!product) return console.error('Product not found.');
+
+        const existingItem = cart.find(item => item.productId === productId);
+        
+        if (existingItem) {
+            existingItem.quantity += quantity;
+        } else {
+            cart.push({ productId, name: product.name, price: product.price, image: product.image, quantity });
+        }
+        updateCartCount();
+        showMessageBox(`Added ${quantity} x ${product.name} to cart!`, 'bg-primary');
+    };
+
+    const updateCartItemQuantity = (productId, newQuantity) => {
+        const item = cart.find(i => i.productId === productId);
+        if (item) {
+            item.quantity = Math.max(1, newQuantity);
+            navigate('cart'); // Re-render cart page
+        }
+    };
+
+    const removeFromCart = (productId) => {
+        cart = cart.filter(item => item.productId !== productId);
+        updateCartCount();
+        showMessageBox('Item removed from cart.', 'bg-red-500');
+        navigate('cart'); // Re-render cart page
+    };
+
+
+    // --- NAVIGATION & PAGE RENDERING ---
+
+    /**
+     * Simulates navigation to a new page
+     * @param {string} pageId - The ID of the page to render ('home', 'products', 'product', 'cart', etc.)
+     * @param {number} [productId] - Optional ID for the product view page.
+     * @param {string} [categoryName] - Optional category for filtering the products page.
+     */
+    const navigate = (pageId, productId = null, categoryName = null) => {
+        currentPage = pageId;
+        const appContent = document.getElementById('app-content');
+        appContent.innerHTML = '';
+        window.scrollTo({ top: 0, behavior: 'instant' });
+
+        switch (pageId) {
+            case 'home':
+                appContent.innerHTML = renderHome();
+                break;
+            case 'products':
+                appContent.innerHTML = renderProducts(categoryName);
+                break;
+            case 'product':
+                appContent.innerHTML = renderProductView(productId);
+                break;
+            case 'categories':
+                appContent.innerHTML = renderCategoryList();
+                break;
+            case 'cart':
+                appContent.innerHTML = renderCart();
+                break;
+            case 'checkout':
+                appContent.innerHTML = renderCheckout();
+                break;
+            case 'confirmation':
+                appContent.innerHTML = renderOrderConfirmation();
+                break;
+            case 'about':
+                appContent.innerHTML = renderAboutUs();
+                break;
+            case 'contact':
+                appContent.innerHTML = renderContactUs();
+                // Re-initialize jQuery validation after rendering
+                initContactFormValidation(); 
+                break;
+            case 'search':
+                appContent.innerHTML = renderSearch();
+                break;
+            default:
+                appContent.innerHTML = `<h1 class="text-4xl text-red-500">404 - Page Not Found</h1>`;
+        }
+    };
+
+    // --- RENDER HELPERS ---
+
+    const renderProductCard = (product) => `
+        <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group">
+            <div class="relative overflow-hidden">
+                <img src="${product.image}" onerror="this.onerror=null;this.src='https://placehold.co/400x400/94A3B8/ffffff?text=Image+Missing'" alt="${product.name}" class="w-full h-56 object-cover transition-transform duration-500 group-hover:scale-105">
+                <button onclick="addToCart(${product.id})" class="absolute top-2 right-2 p-2 bg-primary text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                </button>
+            </div>
+            <div class="p-4">
+                <a href="#" onclick="navigate('product', ${product.id})" class="text-lg font-semibold text-gray-800 hover:text-primary transition">${product.name}</a>
+                <p class="text-gray-500 text-sm">${product.category}</p>
+                <div class="flex items-center justify-between mt-2">
+                    <p class="text-2xl font-bold text-gray-900">${formatCurrency(product.price)}</p>
+                    <div class="text-sm">${renderRating(product.rating)}</div>
+                </div>
+                <button onclick="navigate('product', ${product.id})" class="mt-4 w-full bg-primary text-white py-2 rounded-lg hover-primary transition text-sm font-semibold">
+                    View Details
+                </button>
+            </div>
+        </div>
+    `;
+
+    // --- STEP 1: HOME PAGE ---
+    const renderHome = () => `
+        <!-- Sliders (Hero Section) -->
+        <section class="mb-12 rounded-xl overflow-hidden shadow-2xl">
+            <div class="relative h-96 bg-gray-900 flex items-center justify-center p-8" style="background-image: url('https://placehold.co/1200x400/10b981/ffffff?text=SUMMER+SALE+2025'); background-size: cover; background-position: center;">
+                <div class="text-center bg-black bg-opacity-40 p-6 rounded-xl">
+                    <h1 class="text-4xl sm:text-6xl font-extrabold text-white leading-tight mb-4">New Arrivals: 30% Off</h1>
+                    <p class="text-xl text-gray-200 mb-6">Sustainable fashion and tech for a better future.</p>
+                    <button onclick="navigate('products')" class="bg-secondary text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-amber-600 transition duration-300 transform hover:scale-105">
+                        Shop Now
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features (Step 1) -->
+        <section class="mb-12 py-6 bg-white rounded-xl shadow-lg">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+                <div class="p-3">
+                    <span class="text-primary text-3xl font-bold">🚚</span>
+                    <h3 class="font-semibold mt-2">Free Shipping</h3>
+                    <p class="text-sm text-gray-500">On all orders over $50</p>
+                </div>
+                <div class="p-3">
+                    <span class="text-primary text-3xl font-bold">🔒</span>
+                    <h3 class="font-semibold mt-2">Secure Payments</h3>
+                    <p class="text-sm text-gray-500">100% protected transactions</p>
+                </div>
+                <div class="p-3">
+                    <span class="text-primary text-3xl font-bold">🔄</span>
+                    <h3 class="font-semibold mt-2">Easy Returns</h3>
+                    <p class="text-sm text-gray-500">30-day money-back guarantee</p>
+                </div>
+                <div class="p-3">
+                    <span class="text-primary text-3xl font-bold">📞</span>
+                    <h3 class="font-semibold mt-2">24/7 Support</h3>
+                    <p class="text-sm text-gray-500">Dedicated customer care</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Shop by Category (Step 1) -->
+        <section class="mb-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6 border-b-2 border-primary pb-2">Shop by Category</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                ${mockCategories.map(cat => `
+                    <div onclick="navigate('products', null, '${cat.name}')" class="bg-white rounded-xl shadow-md p-6 text-center hover:shadow-lg transition cursor-pointer transform hover:-translate-y-1">
+                        <img src="${cat.image}" onerror="this.onerror=null;this.src='https://placehold.co/150x150/94A3B8/ffffff?text=${cat.name}'" alt="${cat.name}" class="w-24 h-24 mx-auto rounded-full object-cover mb-3">
+                        <h3 class="text-xl font-semibold text-gray-800">${cat.name}</h3>
+                    </div>
+                `).join('')}
+            </div>
+        </section>
+
+        <!-- Latest Products (Step 1) -->
+        <section>
+            <h2 class="text-3xl font-bold text-gray-800 mb-6 border-b-2 border-primary pb-2">Latest Products</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                ${mockProducts.slice(0, 4).map(renderProductCard).join('')}
+            </div>
+            <div class="text-center mt-8">
+                <button onclick="navigate('products')" class="bg-primary text-white font-bold py-3 px-6 rounded-full shadow-md hover-primary transition duration-300">
+                    View All Products
+                </button>
+            </div>
+        </section>
+    `;
+
+    // --- STEP 2: PRODUCTS PAGE / STEP 10: SEARCH PAGE ---
+    let currentFilter = { category: 'All', minPrice: 0, maxPrice: 500 };
+
+    const renderProducts = (category = null) => {
+        if (category) currentFilter.category = category;
+
+        const allCategories = ['All', ...mockCategories.map(c => c.name)];
+        const productsHtml = filterAndRenderProducts(mockProducts);
+
+        return `
+            <div class="text-center mb-10">
+                <h1 class="text-4xl font-extrabold text-gray-900">${category || 'All Products'}</h1>
+                <p class="text-gray-500 mt-2">Explore our full range of curated items.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                <!-- Filters (Step 2) -->
+                <aside class="lg:col-span-1 bg-white p-6 rounded-xl shadow-lg h-fit sticky top-20">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2">Filters</h3>
+
+                    <!-- Category Filter (Step 2) -->
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-gray-700 mb-3">Shop by Category</h4>
+                        <div class="space-y-2" id="category-filter">
+                            ${allCategories.map(cat => `
+                                <div class="flex items-center">
+                                    <input type="radio" id="cat-${cat.toLowerCase().replace(' ', '-')}" name="category-filter" value="${cat}" 
+                                        class="h-4 w-4 text-primary border-gray-300 rounded focus:ring-primary" 
+                                        ${cat === currentFilter.category ? 'checked' : ''} onchange="applyFilter('category', this.value)">
+                                    <label for="cat-${cat.toLowerCase().replace(' ', '-')}" class="ml-3 text-sm font-medium text-gray-700 cursor-pointer">
+                                        ${cat} (${mockProducts.filter(p => cat === 'All' || p.category === cat).length})
+                                    </label>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <!-- Price Range Filter (Step 2) -->
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-gray-700 mb-3">Price Range</h4>
+                        <div class="p-3 bg-gray-50 rounded-lg">
+                            <input type="range" id="price-range" min="0" max="500" step="10" value="${currentFilter.maxPrice}" oninput="document.getElementById('price-display').textContent = this.value; applyFilter('maxPrice', parseFloat(this.value))" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer range-lg">
+                            <div class="flex justify-between mt-2 text-sm text-gray-600">
+                                <span>$0</span>
+                                <span id="price-display">$${currentFilter.maxPrice}</span>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- Products List (Step 2) -->
+                <div class="lg:col-span-3">
+                    <div id="product-list-container" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                        ${productsHtml}
+                    </div>
+                    <p id="no-products-message" class="text-center text-gray-500 mt-10 ${productsHtml ? 'hidden' : ''}">No products match your current filters.</p>
+                </div>
+            </div>
+        `;
+    };
+
+    const applyFilter = (key, value) => {
+        if (key === 'maxPrice') value = parseFloat(value);
+        currentFilter[key] = value;
+        
+        // Re-render only the product list section
+        const productsHtml = filterAndRenderProducts(mockProducts);
+        const container = document.getElementById('product-list-container');
+        const message = document.getElementById('no-products-message');
+
+        if (container) {
+            container.innerHTML = productsHtml;
+            if (message) message.classList.toggle('hidden', !!productsHtml);
+        }
+    };
+
+    const filterAndRenderProducts = (productsToFilter) => {
+        const filteredProducts = productsToFilter.filter(p => {
+            const categoryMatch = currentFilter.category === 'All' || p.category === currentFilter.category;
+            const priceMatch = p.price <= currentFilter.maxPrice;
+            return categoryMatch && priceMatch;
+        });
+
+        return filteredProducts.map(renderProductCard).join('');
+    };
+    
+    // --- STEP 10: SEARCH PAGE IMPLEMENTATION ---
+    const toggleSearch = () => {
+        const dropdown = document.getElementById('search-dropdown');
+        dropdown.classList.toggle('hidden');
+        if (!dropdown.classList.contains('hidden')) {
+            document.getElementById('search-input').focus();
+        }
+    }
+
+    const performSearch = (query = null) => {
+        query = query || document.getElementById('search-input').value.trim().toLowerCase();
+        if (query) {
+            currentFilter = { category: 'All', minPrice: 0, maxPrice: 500 }; // Reset filters for new search
+            navigate('search', null, query);
+            document.getElementById('search-dropdown').classList.add('hidden'); // Hide dropdown after search
+        }
+    }
+
+    const renderSearch = () => {
+        const query = (new URLSearchParams(window.location.hash.substring(1))).get('q') || '';
+        const searchResults = mockProducts.filter(p => 
+            p.name.toLowerCase().includes(query) || 
+            p.description.toLowerCase().includes(query) ||
+            p.category.toLowerCase().includes(query)
+        );
+
+        return `
+            <div class="text-center mb-10">
+                <h1 class="text-4xl font-extrabold text-gray-900">Search Results for: "<span class="text-primary">${query}</span>"</h1>
+                <p class="text-gray-500 mt-2">${searchResults.length} items found.</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                ${searchResults.map(renderProductCard).join('')}
+            </div>
+            ${searchResults.length === 0 ? '<p class="text-center text-gray-500 mt-10 text-xl">No products matched your search query. Try a different term.</p>' : ''}
+        `;
+    };
+    
+
+    // --- STEP 3: PRODUCTS VIEW PAGE ---
+    const renderProductView = (productId) => {
+        const product = mockProducts.find(p => p.id === productId);
+        if (!product) return `<h1 class="text-4xl text-red-500">Product Not Found</h1>`;
+
+        const relatedProducts = mockProducts.filter(p => p.category === product.category && p.id !== productId).slice(0, 4);
+
+        return `
+            <div class="bg-white rounded-xl shadow-lg p-6 lg:p-12">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                    <!-- Images (Step 3) -->
+                    <div>
+                        <img src="${product.image}" onerror="this.onerror=null;this.src='https://placehold.co/600x600/94A3B8/ffffff?text=Image+Missing'" alt="${product.name}" class="w-full h-96 object-cover rounded-lg shadow-md">
+                        <div class="flex space-x-2 mt-4">
+                             <!-- Mock thumbnails -->
+                            <img src="${product.image.replace('400x400', '100x100')}" class="w-20 h-20 object-cover rounded-md border-2 border-primary cursor-pointer">
+                            <img src="${product.image.replace('400x400', '100x100').replace('ffffff', 'cccccc')}" class="w-20 h-20 object-cover rounded-md border cursor-pointer">
+                            <img src="${product.image.replace('400x400', '100x100').replace('10b981', '000000')}" class="w-20 h-20 object-cover rounded-md border cursor-pointer">
+                        </div>
+                    </div>
+                    
+                    <!-- Product Details -->
+                    <div>
+                        <!-- Product Title (Step 3) -->
+                        <h1 class="text-4xl font-extrabold text-gray-900 mb-2">${product.name}</h1>
+                        <p class="text-lg text-primary mb-4">${product.category}</p>
+                        
+                        <!-- Price (Step 3) -->
+                        <p class="text-5xl font-bold text-gray-800 mb-4">${formatCurrency(product.price)}</p>
+
+                        <!-- Ratings (Step 3) -->
+                        <div class="flex items-center space-x-2 mb-6">
+                            ${renderRating(product.rating)}
+                            <span class="text-gray-500 text-sm">(124 Reviews)</span>
+                        </div>
+
+                        <!-- Description (Step 3) -->
+                        <p class="text-gray-600 mb-8 leading-relaxed">${product.description}</p>
+                        
+                        <!-- Add to Cart (Step 3) -->
+                        <div class="flex items-center space-x-4">
+                            <input type="number" id="product-quantity" value="1" min="1" class="w-20 p-2 border border-gray-300 rounded-lg text-center" oninput="this.value = Math.max(1, parseInt(this.value) || 1)">
+                            <button onclick="addToCart(${product.id}, parseInt(document.getElementById('product-quantity').value))" class="flex-1 bg-primary text-white font-bold py-3 px-6 rounded-lg hover-primary transition text-lg shadow-md">
+                                <span class="mr-2">🛒</span> Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Related Products (Step 3) -->
+            <section class="mt-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6 border-b-2 border-primary pb-2">Related Products</h2>
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    ${relatedProducts.map(renderProductCard).join('')}
+                    ${relatedProducts.length === 0 ? '<p class="text-gray-500">No related products found in this category.</p>' : ''}
+                </div>
+            </section>
+        `;
+    };
+
+    // --- STEP 4: CATEGORY PAGE (List) ---
+    const renderCategoryList = () => `
+        <div class="text-center mb-10">
+            <h1 class="text-4xl font-extrabold text-gray-900">Browse All Categories</h1>
+            <p class="text-gray-500 mt-2">Find exactly what you need in our curated collections.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            ${mockCategories.map(cat => `
+                <div onclick="navigate('products', null, '${cat.name}')" class="bg-white rounded-xl shadow-lg overflow-hidden cursor-pointer hover:shadow-xl transition transform hover:scale-[1.02]">
+                    <img src="${cat.image}" onerror="this.onerror=null;this.src='https://placehold.co/800x300/10B981/ffffff?text=${cat.name}'" alt="${cat.name}" class="w-full h-64 object-cover">
+                    <div class="p-6">
+                        <!-- Title (Step 4) -->
+                        <h2 class="text-3xl font-bold text-gray-800 mb-2">${cat.name}</h2>
+                        <!-- Short Description (Step 4) -->
+                        <p class="text-gray-600">${cat.description}</p>
+                        <span class="text-primary font-semibold mt-3 inline-block">View ${mockProducts.filter(p => p.category === cat.name).length} Products &rarr;</span>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    `;
+
+    // --- STEP 5: CART PAGE ---
+    const renderCart = () => {
+        const cartItemsHtml = cart.map(item => {
+            const product = mockProducts.find(p => p.id === item.productId) || item;
+            const subtotal = item.price * item.quantity;
+            return `
+                <div class="flex items-center border-b py-4">
+                    <!-- Images (Step 5) -->
+                    <img src="${product.image.replace('400x400', '80x80')}" onerror="this.onerror=null;this.src='https://placehold.co/80x80/94A3B8/ffffff?text=Item'" alt="${product.name}" class="w-20 h-20 object-cover rounded-lg mr-4">
+                    
+                    <div class="flex-1 min-w-0">
+                        <!-- Title (Step 5) -->
+                        <a href="#" onclick="navigate('product', ${item.productId})" class="text-lg font-semibold text-gray-800 hover:text-primary transition truncate">${item.name}</a>
+                        <p class="text-gray-500 text-sm">${formatCurrency(item.price)} per item</p>
+                    </div>
+
+                    <!-- Quantity (Step 5) -->
+                    <div class="w-28 flex items-center mx-4">
+                        <button onclick="updateCartItemQuantity(${item.productId}, ${item.quantity - 1})" class="p-1 border rounded-l bg-gray-100 hover:bg-gray-200">-</button>
+                        <input type="number" value="${item.quantity}" min="1" readonly class="w-10 text-center border-t border-b text-gray-800 focus:outline-none">
+                        <button onclick="updateCartItemQuantity(${item.productId}, ${item.quantity + 1})" class="p-1 border rounded-r bg-gray-100 hover:bg-gray-200">+</button>
+                    </div>
+
+                    <!-- Price (Subtotal) (Step 5) -->
+                    <p class="font-bold text-lg w-20 text-right">${formatCurrency(subtotal)}</p>
+
+                    <button onclick="removeFromCart(${item.productId})" class="ml-4 p-2 text-red-500 hover:text-red-700 transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                    </button>
+                </div>
+            `;
+        }).join('');
+
+        const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        const shipping = subtotal > 100 ? 0 : 15.00;
+        const taxRate = 0.05;
+        const tax = subtotal * taxRate;
+        const totalAmount = subtotal + shipping + tax;
+
+        return `
+            <!-- Title (Step 5) -->
+            <h1 class="text-4xl font-extrabold text-gray-900 mb-8 text-center">Your Shopping Cart</h1>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Cart Products List (Step 5) -->
+                <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-lg">
+                    ${cart.length > 0 ? cartItemsHtml : '<p class="text-center text-gray-500 text-xl py-10">Your cart is empty. Time to start shopping! 🛒</p>'}
+                </div>
+
+                <!-- Total Amount Summary (Step 5) -->
+                <div class="lg:col-span-1 bg-white p-6 rounded-xl shadow-lg h-fit">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">Order Summary</h2>
+                    
+                    <div class="space-y-3 text-gray-700">
+                        <div class="flex justify-between">
+                            <span>Subtotal:</span>
+                            <span class="font-semibold">${formatCurrency(subtotal)}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Shipping:</span>
+                            <span class="font-semibold">${shipping === 0 ? 'Free' : formatCurrency(shipping)}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Taxes (5%):</span>
+                            <span class="font-semibold">${formatCurrency(tax)}</span>
+                        </div>
+                        
+                        <div class="flex justify-between pt-4 border-t border-gray-200 text-xl font-bold">
+                            <!-- Total Amount (Step 5) -->
+                            <span>Total Amount:</span>
+                            <span class="text-primary">${formatCurrency(totalAmount)}</span>
+                        </div>
+                    </div>
+                    
+                    <button onclick="${cart.length > 0 ? "navigate('checkout')" : "showMessageBox('Your cart is empty!', 'bg-red-500')"}" 
+                        class="mt-6 w-full bg-secondary text-white font-bold py-3 rounded-lg hover:bg-amber-600 transition shadow-md text-lg">
+                        Proceed to Checkout &rarr;
+                    </button>
+                </div>
+            </div>
+        `;
+    };
+
+    // --- STEP 6: CHECK OUT PAGE ---
+    const renderCheckout = () => {
+        if (cart.length === 0) {
+            showMessageBox('Cart is empty. Redirecting to Shop.', 'bg-red-500');
+            return renderProducts();
+        }
+        
+        const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        const shipping = subtotal > 100 ? 0 : 15.00;
+        const tax = subtotal * 0.05;
+        const totalAmount = subtotal + shipping + tax;
+
+        // Mock Order Placement
+        window.placeOrder = () => {
+            const form = document.getElementById('shipping-form');
+            if (form.checkValidity()) {
+                orderNumber = 'EC-' + Math.floor(Math.random() * 900000 + 100000);
+                cart = []; // Clear cart
+                updateCartCount();
+                navigate('confirmation');
+            } else {
+                form.reportValidity();
+            }
+        };
+
+        return `
+            <h1 class="text-4xl font-extrabold text-gray-900 mb-8 text-center">Checkout</h1>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Shipping Information Form (Step 6) -->
+                <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6 border-b pb-2">Shipping Information</h2>
+                    <form id="shipping-form" onsubmit="event.preventDefault(); placeOrder();">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <input type="text" placeholder="Full Name" required class="p-3 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary">
+                            <input type="email" placeholder="Email Address" required class="p-3 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary">
+                            <input type="tel" placeholder="Phone Number" required class="p-3 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary">
+                            <input type="text" placeholder="Address Line 1" required class="p-3 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary col-span-2">
+                            <input type="text" placeholder="City" required class="p-3 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary">
+                            <input type="text" placeholder="State/Province" required class="p-3 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary">
+                            <input type="text" placeholder="Zip/Postal Code" required class="p-3 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary">
+                            <select required class="p-3 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary bg-white">
+                                <option value="" disabled selected>Select Country</option>
+                                <option>United States</option>
+                                <option>Canada</option>
+                                <option>United Kingdom</option>
+                            </select>
+                        </div>
+
+                        <h2 class="text-2xl font-bold text-gray-800 mt-10 mb-6 border-b pb-2">Payment</h2>
+                        <div class="space-y-3">
+                            <label class="block p-4 border border-gray-200 rounded-lg cursor-pointer hover:border-primary transition">
+                                <input type="radio" name="payment-method" value="card" checked class="text-primary focus:ring-primary mr-2">
+                                Credit/Debit Card
+                            </label>
+                            <label class="block p-4 border border-gray-200 rounded-lg cursor-pointer hover:border-primary transition">
+                                <input type="radio" name="payment-method" value="paypal" class="text-primary focus:ring-primary mr-2">
+                                PayPal
+                            </label>
+                            <label class="block p-4 border border-gray-200 rounded-lg cursor-pointer hover:border-primary transition">
+                                <input type="radio" name="payment-method" value="cash" class="text-primary focus:ring-primary mr-2">
+                                Cash On Delivery (COD)
+                            </label>
+                        </div>
+                        
+                        <div class="mt-8">
+                            <label class="flex items-center text-sm text-gray-600">
+                                <input type="checkbox" required class="text-primary focus:ring-primary mr-2 rounded">
+                                I agree to the terms and conditions.
+                            </label>
+                        </div>
+
+                        <button type="submit" class="mt-8 w-full bg-primary text-white font-bold py-3 rounded-lg hover-primary transition shadow-md text-xl">
+                            Place Order (${formatCurrency(totalAmount)})
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Order Summary (Step 6) -->
+                <div class="lg:col-span-1 bg-white p-6 rounded-xl shadow-lg h-fit">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">Order Summary</h2>
+                    <ul class="space-y-3 mb-6 max-h-48 overflow-y-auto">
+                        ${cart.map(item => `<li class="flex justify-between text-sm text-gray-600 border-b border-dashed pb-2"><span>${item.name} (x${item.quantity})</span><span>${formatCurrency(item.price * item.quantity)}</span></li>`).join('')}
+                    </ul>
+                    <div class="space-y-3 text-gray-700">
+                        <div class="flex justify-between"><span>Subtotal:</span><span class="font-semibold">${formatCurrency(subtotal)}</span></div>
+                        <div class="flex justify-between"><span>Shipping:</span><span class="font-semibold">${shipping === 0 ? 'Free' : formatCurrency(shipping)}</span></div>
+                        <div class="flex justify-between"><span>Taxes:</span><span class="font-semibold">${formatCurrency(tax)}</span></div>
+                        <div class="flex justify-between pt-4 border-t text-xl font-bold">
+                            <span>Total:</span>
+                            <span class="text-primary">${formatCurrency(totalAmount)}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    };
+
+    // --- STEP 7: ORDER CONFIRMATION PAGE ---
+    const renderOrderConfirmation = () => {
+        const orderId = orderNumber || 'EC-000000'; // Fallback if direct access
+        return `
+            <div class="bg-white p-10 rounded-xl shadow-2xl text-center max-w-2xl mx-auto">
+                <!-- Order Confirmation Message (Step 7) -->
+                <div class="text-6xl text-primary mb-4">🎉</div>
+                <h1 class="text-4xl font-extrabold text-gray-900 mb-4">Order Confirmed!</h1>
+                <p class="text-lg text-gray-600 mb-6">Thank you for your purchase. We are processing your order and will send you an email confirmation shortly.</p>
+                
+                <div class="bg-gray-50 p-6 rounded-lg inline-block text-left">
+                    <!-- Order No (Step 7) -->
+                    <p class="text-xl font-semibold text-gray-800">Order Number: <span class="text-secondary">${orderId}</span></p>
+                    <!-- Status (Step 7) -->
+                    <p class="text-lg text-gray-600 mt-2">Status: <span class="font-medium text-primary">Processing Shipment</span></p>
+                </div>
+
+                <div class="mt-8 space-x-4">
+                    <button onclick="navigate('products')" class="bg-gray-200 text-gray-700 font-semibold py-3 px-6 rounded-lg hover:bg-gray-300 transition">
+                        Continue Shopping
+                    </button>
+                    <button onclick="alert('Tracking information is unavailable in this demo.')" class="bg-primary text-white font-semibold py-3 px-6 rounded-lg hover-primary transition">
+                        Track Order
+                    </button>
+                </div>
+            </div>
+        `;
+    };
+
+    // --- STEP 8: ABOUT US PAGE ---
+    const renderAboutUs = () => `
+        <div class="bg-white p-6 rounded-xl shadow-lg">
+            <h1 class="text-4xl font-extrabold text-gray-900 mb-8 text-center border-b-2 border-primary pb-2">Our Story & Mission</h1>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center mb-12">
+                <!-- Images & Text (Step 8) -->
+                <div>
+                    <img src="https://placehold.co/800x500/10b981/ffffff?text=Our+Team+%26+Factory" onerror="this.onerror=null;this.src='https://placehold.co/800x500/94A3B8/ffffff?text=About+Image'" alt="Our Team" class="w-full h-auto object-cover rounded-lg shadow-xl">
+                </div>
+                <div>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">Committed to Sustainability & Quality</h2>
+                    <p class="text-gray-600 leading-relaxed">EcoStore was founded on the principle that commerce should not come at the expense of the planet. We meticulously source every product to ensure it meets our strict standards for sustainability, ethical production, and superior quality. We believe in transparency and empowering our customers to make conscious choices.</p>
+                    <p class="text-gray-600 leading-relaxed mt-4 font-semibold">Our mission is simple: to offer premium, eco-friendly goods accessible to everyone, driving positive change one purchase at a time.</p>
+                </div>
+            </div>
+            
+            <!-- Features (Step 8) -->
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Why Choose Us?</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+                    <div class="p-6 bg-gray-50 rounded-lg shadow-sm">
+                        <span class="text-5xl text-primary">🌱</span>
+                        <h3 class="font-bold text-xl mt-3">Eco-Friendly Sourcing</h3>
+                        <p class="text-gray-500 text-sm">Every item is rigorously vetted for environmental impact.</p>
+                    </div>
+                    <div class="p-6 bg-gray-50 rounded-lg shadow-sm">
+                        <span class="text-5xl text-primary">🤝</span>
+                        <h3 class="font-bold text-xl mt-3">Ethical Production</h3>
+                        <p class="text-gray-500 text-sm">Fair wages and safe working conditions are non-negotiable.</p>
+                    </div>
+                    <div class="p-6 bg-gray-50 rounded-lg shadow-sm">
+                        <span class="text-5xl text-primary">💎</span>
+                        <h3 class="font-bold text-xl mt-3">Uncompromising Quality</h3>
+                        <p class="text-gray-500 text-sm">Products designed to last, reducing the need for replacement.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Testimonials (Step 8) -->
+            <section>
+                <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">What Our Customers Say</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    ${mockTestimonials.map(t => `
+                        <div class="bg-primary bg-opacity-10 p-6 rounded-xl shadow-md border-t-4 border-primary">
+                            <p class="italic text-gray-700 mb-4">"${t.text}"</p>
+                            <p class="font-semibold text-gray-800">${t.name}</p>
+                            <p class="text-sm text-primary">${t.source}</p>
+                        </div>
+                    `).join('')}
+                </div>
+            </section>
+        </div>
+    `;
+
+    // --- STEP 9: CONTACT US ---
+    const renderContactUs = () => `
+        <div class="bg-white p-6 rounded-xl shadow-lg">
+            <h1 class="text-4xl font-extrabold text-gray-900 mb-8 text-center border-b-2 border-primary pb-2">Get In Touch</h1>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+                <!-- Contact Info (Step 9) -->
+                <div class="lg:col-span-1 space-y-6">
+                    <div class="p-4 bg-gray-50 rounded-lg shadow-sm">
+                        <h3 class="font-bold text-xl text-primary mb-2">Email Us</h3>
+                        <p class="text-gray-600">We respond to all inquiries within 24 hours.</p>
+                        <a href="mailto:support@ecostore.com" class="text-secondary hover:underline font-semibold">support@ecostore.com</a>
+                    </div>
+                    <div class="p-4 bg-gray-50 rounded-lg shadow-sm">
+                        <h3 class="font-bold text-xl text-primary mb-2">Call Us</h3>
+                        <p class="text-gray-600">Mon - Fri, 9:00 AM - 5:00 PM EST</p>
+                        <a href="tel:+18001234567" class="text-secondary hover:underline font-semibold">+1 (800) 123-4567</a>
+                    </div>
+                    <div class="p-4 bg-gray-50 rounded-lg shadow-sm">
+                        <h3 class="font-bold text-xl text-primary mb-2">Our Address</h3>
+                        <p class="text-gray-600">123 Green Way, Suite 400<br>Sustainable City, CA 90210</p>
+                    </div>
+                </div>
+
+                <!-- Contact Form (Step 9) -->
+                <div class="lg:col-span-2">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">Send Us a Message</h2>
+                    <form id="contactForm" class="space-y-4">
+                        <input type="text" name="name" id="contact-name" placeholder="Your Name" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary">
+                        <input type="email" name="email" id="contact-email" placeholder="Your Email" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary">
+                        <input type="text" name="subject" id="contact-subject" placeholder="Subject" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary">
+                        <textarea name="message" id="contact-message" rows="5" placeholder="Your Message" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary"></textarea>
+                        
+                        <div id="form-message" class="hidden p-3 rounded-lg text-center font-semibold"></div>
+
+                        <button type="submit" class="w-full bg-primary text-white font-bold py-3 rounded-lg hover-primary transition text-lg shadow-md">
+                            Submit Form
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // --- STEP 9: JAVASCRIPT & JQUERY VALIDATION ---
+    const initContactFormValidation = () => {
+        // Simple jQuery validation setup
+        const form = $('#contactForm');
+        const messageBox = $('#form-message');
+
+        // Function to display messages (error or success)
+        const displayMessage = (text, type) => {
+            messageBox.text(text).removeClass('hidden bg-red-100 text-red-700 bg-green-100 text-green-700');
+            if (type === 'success') {
+                messageBox.addClass('bg-green-100 text-green-700');
+                form[0].reset();
+            } else {
+                messageBox.addClass('bg-red-100 text-red-700');
+            }
+        };
+
+        form.off('submit').on('submit', function(e) {
+            e.preventDefault();
+            messageBox.addClass('hidden');
+
+            const name = $('#contact-name').val().trim();
+            const email = $('#contact-email').val().trim();
+            const subject = $('#contact-subject').val().trim();
+            const message = $('#contact-message').val().trim();
+
+            if (!name || !email || !subject || !message) {
+                return displayMessage('Please fill out all required fields.', 'error');
+            }
+
+            // Simple email regex validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                return displayMessage('Please enter a valid email address.', 'error');
+            }
+
+            // Simulate form submission success
+            displayMessage('Thank you! Your message has been sent successfully.', 'success');
+        });
+    };
+
+    // --- UTILITY: Message Box ---
+    const showMessageBox = (message, bgColor) => {
+        let box = document.getElementById('message-box');
+        if (!box) {
+            box = document.createElement('div');
+            box.id = 'message-box';
+            box.className = 'fixed bottom-5 left-1/2 transform -translate-x-1/2 z-[100] p-4 rounded-lg shadow-2xl text-white font-semibold transition-opacity duration-300 opacity-0';
+            document.body.appendChild(box);
+        }
+        
+        box.textContent = message;
+        box.className = `fixed bottom-5 left-1/2 transform -translate-x-1/2 z-[100] p-4 rounded-lg shadow-2xl text-white font-semibold transition-opacity duration-300 ${bgColor} opacity-100`;
+
+        setTimeout(() => {
+            box.classList.remove('opacity-100');
+            box.classList.add('opacity-0');
+        }, 3000);
+    };
+
+    // --- SCROLL TO TOP LOGIC ---
+    window.onscroll = function() {
+        const button = document.getElementById('scroll-to-top');
+        if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+            button.classList.remove('opacity-0', 'invisible');
+            button.classList.add('opacity-100', 'visible');
+        } else {
+            button.classList.remove('opacity-100', 'visible');
+            button.classList.add('opacity-0', 'invisible');
+        }
+    };
+
+    // Initial Load
+    document.addEventListener('DOMContentLoaded', () => {
+        // Initialize Firebase/Auth components if they were available, but using randomUUID as per guidance
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        // Note: Actual Firebase setup is omitted as the request focuses on front-end features and not persistence.
+        
+        // Initial page load
+        updateCartCount();
+        navigate('home'); 
+    });
+</script>
+</body>
+</html>
